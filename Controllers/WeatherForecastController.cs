@@ -44,8 +44,8 @@ namespace aspnetcorewithreact2.Controllers
             //_ILibraryService.Update(lNewLibraryToUpdate);
 
             /// Delete library
-            Library lLibraryToUpdate = _ILibraryService.GetByName("john").FirstOrDefault();
-            _ILibraryService.Delete(lLibraryToUpdate);
+            //Library lLibraryToUpdate = _ILibraryService.GetByName("john").FirstOrDefault();
+            //_ILibraryService.Delete(lLibraryToUpdate);
 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
