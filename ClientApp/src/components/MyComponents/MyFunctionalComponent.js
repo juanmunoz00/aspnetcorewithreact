@@ -25,7 +25,7 @@ export default function Hello(props) {
      * `useState initilizes the state`
      * */
 
-    const [age, setAge] = useState(20);
+    const [age, setAge] = useState(25);
 
     /* EVENT HANDLING */
     /* The event handling is a method that will be executed when `something` hapens on the displayed page like a click.
@@ -41,6 +41,41 @@ export default function Hello(props) {
         let name = props.name ? props.name : "John";
         alert('Name: ' + name + ' | Age:' + age + ' | Telephone: ' + prTelephone);
     }
+
+    /* CONDITIONAL RENDERING */
+    /* An element of the component will be rendered depending if it fullifls a condition.
+     */
+
+    //const [aboveAge, setAboveage] = useState('John has more than 25 years');
+    //const [lessOrEqualAge, setLessOrEqualage] = useState('John has 25 years or less');
+
+    const aboveAge = "John has more than 25 years";
+    const lessOrEqualAge = "John has 25 years or less";
+
+    let JohnAge = () => {
+        if (age > 25)
+            return (<p>{ aboveAge }</p>)
+        else
+            return (<p>{ lessOrEqualAge }</p>)
+    }
+
+    /* ITERATIONS */
+    /* Example 1
+     * Use a mapped list
+     * */
+
+    /* Users dictionary */
+    let users = [
+        { name: 'Mateo', age: 35 },
+        { name: 'Marcos', age: 40 },
+        { name: 'Lucas', age: 45 },
+        { name: 'Juan', age: 20 },
+    ]
+
+    let userList = users.map((user) =>
+        <li key={user.name}>Name: {user.name} - Age: {user.age} </li>
+    );
+
 
     return (
         <div>
@@ -62,6 +97,56 @@ export default function Hello(props) {
             <span>
                 <b>Age: </b>{age}
                 <button onClick={showDetails.bind(this, 123456) }> Show Details </button>
+                
+            </span>
+
+            { /* CONDITIONAL RENDERING */}
+            <hr />
+            <h3>Conditional Rendering</h3>
+
+            {  /* EXAMPLE 1 - IF/ELSE */ }
+            <span>
+                {JohnAge()}
+            </span>
+
+            {  /* EXAMPLE 2 - TERNARY OPERATOR */}
+            <span>
+                <p>{ age > 25 ? aboveAge : lessOrEqualAge } </p>
+            </span>
+
+            {  /* EXAMPLE 3 - SHORT-CIRCUIT OPERATOR */}
+            <span>
+                {age > 25 && <p>{ aboveAge }</p>}
+                {age <= 25 && <p>{ lessOrEqualAge }</p>}
+            </span>
+
+            {  /* EXAMPLE 4 - IMEDIATLY INVOKED FUNCTION */}
+            <span>
+                {
+                    (() => {
+                        switch (age) {
+                            case 25: return (<p>{ aboveAge }</p>);
+                            default: return (<p>{ lessOrEqualAge }</p>);
+                        }
+                    })()
+                }
+            </span>
+            
+            { /* CONDITIONAL RENDERING */}
+            <hr />
+            <h3>Iterations (list)</h3>
+            <span>
+                
+                <ul>
+                    {/* Example 1 - Display list loaded in a variable */}
+                    {userList}
+                    <br />
+                    {/* Example 2 - Display list from a map in a function */ }
+                    { users.map((user) =>
+                        <li key={user.name}>Name: {user.name} - Age: {user.age} </li>)
+
+                    }
+                </ul>
                 
             </span>
 
