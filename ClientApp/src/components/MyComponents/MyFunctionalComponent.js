@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState, useRef } from 'react';
 
 export default function Hello(props) {
 
@@ -76,6 +76,32 @@ export default function Hello(props) {
         <li key={user.name}>Name: {user.name} - Age: {user.age} </li>
     );
 
+    /* USER FORM */
+    /* Declare a state variable
+     * Define the state change handling, in this case, user's name change
+     * Define the form submit handle
+     * 
+    */
+    
+    const [userName, setUserName] = useState("David");
+    const handleUserNameChange = (event) => {
+        setUserName(event.target.value);
+    }
+
+    const handleSubmit = (event) => {
+            alert("Form submitted. Value: " + userName)
+    }
+
+    /* REFS */
+    /* Creates a const that holds a null value that then is referenced in a const method
+     */
+    const inputRefName = useRef(null);
+    const inputRefTelephone = useRef(null);
+    const clearReffFields = () => {
+        inputRefName.current.value = "";
+        inputRefTelephone.current.value = "";
+        inputRefName.current.focus();
+    }
 
     return (
         <div>
@@ -146,8 +172,35 @@ export default function Hello(props) {
                         <li key={user.name}>Name: {user.name} - Age: {user.age} </li>)
 
                     }
-                </ul>
-                
+                </ul>                
+            </span>
+
+            { /* FORM */}
+            <hr />
+            <h3>Form</h3>
+            <span>
+                <form onSubmit={handleSubmit}>
+                    <lablel>
+                        Name:
+                        <input type="text" value={userName} onChange={handleUserNameChange} />
+                    </lablel>
+                    <input type="submit" value="submit" />
+                </form>
+            </span>
+
+            { /* FORM */}
+            <hr />
+            <h3>Refs</h3>
+            <span>
+                <lablel>
+                    Name:
+                    <input type="text" ref={ inputRefName} placeholder="User Name" />
+                </lablel>
+                <lablel>
+                    Telephone:
+                    <input type="text" ref={inputRefTelephone}  placeholder="0123456789"/>
+                </lablel>
+                <button onClick={ clearReffFields.bind(this)} >Clear Fields</button>
             </span>
 
         </div>
