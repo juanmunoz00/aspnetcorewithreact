@@ -14,7 +14,7 @@ const LibraryComponent = (props) => {
 
     /* LIST LIBRARIES */
     /// library state variable to store the controller response value
-    const [libraryList, setLibraryList] = useState([]);
+    const [librariesList, setLibrariesList] = useState([]);
 
     /* SEARCH LIBRARY */
 
@@ -27,10 +27,36 @@ const LibraryComponent = (props) => {
         let URL = searchParameterName !== "" ? ("http://localhost:5176/api/Library/Search?prName=" + searchParameterName) : ("http://localhost:5176/api/Library/GetAll");
         axios.get(URL).then(response => {
             response.data.map(item => { item.isEditing = false; })
-            setLibraryList(response.data);
+            setLibrariesList(response.data);
         })
     }
 
+    /* UDATE */
+    const handleLibraryInputChange = (prLibrary, prInput) => {
+        let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
+        const index = librariesNewReference.findIndex((item) => item.name == prLibrary.name);
+        const { name, value } = prInput.target; // Get the NAME and VALUE of the property changed
+        librariesNewReference[index] = { ...prLibrary, [name]: value };// Update just the specific propertu keeping the others
+        setLibrariesList(librariesNewReference);
+
+    }
+
+    const editLibrary = (prLibrary) => {
+        let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
+        const index = librariesNewReference.findIndex((item) => item.name == prLibrary.name);
+        librariesNewReference[index].isEditing = true;
+        setLibrariesList(librariesNewReference);
+    }
+
+    const confirmUpdate = (prLibrary) => {
+        axios.put("http://localhost:5176/api/Library/Update", prLibrary).then(response => {
+            let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
+            const index = librariesNewReference.findIndex((item) => item.name == prLibrary.name);
+            librariesNewReference[index] = prLibrary;
+            librariesNewReference[index].isEditing = false;
+            setLibrariesList(librariesNewReference);
+        })
+    }
 
     return (
         <div>
@@ -110,14 +136,15 @@ const LibraryComponent = (props) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {libraryList.map(item =>
+                                    {librariesList.map(item =>
                                         <tr key={item.name} >
-                                            <td> <input className="form-control" value={item.name} name="name" disabled={!item.isEditing} /> </td>
-                                            <td> <input className="form-control" value={item.address} name="address" disabled={!item.isEditing} /> </td>
-                                            <td> <input className="form-control" value={item.telephone} name="telephone" disabled={!item.isEditing} /> </td>
+                                            <td> <input className="form-control" value={item.name} onChange={ handleLibraryInputChange.bind(this, item) } name="name" disabled={!item.isEditing} /> </td>
+                                            <td> <input className="form-control" value={item.address} onChange={handleLibraryInputChange.bind(this, item)}  name="address" disabled={!item.isEditing} /> </td>
+                                            <td> <input className="form-control" value={item.telephone} onChange={handleLibraryInputChange.bind(this, item)}  name="telephone" disabled={!item.isEditing} /> </td>
                                             <td>
                                                 <div className="btn-toolbar" >
-                                                    <button type="button" className="btn btn-info mr-2" style={{ display: item.isEditing ? 'none' : 'block' }}>Edit</button>
+                                                    <button type="button" className="btn btn-info mr-2" onClick={editLibrary.bind(this, item)} style={{ display: item.isEditing ? 'none' : 'block' }}>Edit</button>
+                                                    <button type="button" className="btn btn-info mr-2" onClick={confirmUpdate.bind(this, item)} style={{ display: item.isEditing ? 'block' : 'none' }}>Save</button>
                                                 </div>
                                             </td>
                                         </tr>
