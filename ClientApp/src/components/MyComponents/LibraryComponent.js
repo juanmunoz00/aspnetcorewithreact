@@ -12,19 +12,21 @@ const LibraryComponent = (props) => {
     //    ]
     //);
 
-    /* LIST LIBRARIES */ 
+    /* LIST LIBRARIES */
     /// library state variable to store the controller response value
     const [libraryList, setLibraryList] = useState([]);
 
     /* SEARCH LIBRARY */
+
     const [searchParameterName, setSerchParameterName] = useState('');
     const handleInputChange = (event) => {
         setSerchParameterName(event.target.value.toString());
     }
 
     const searchItems = () => {
-        let URL = searchParameterName != "" ? ("http://localhost:5176/api/Library/Search?prName=" + searchParameterName) : ("http://localhost:5176/api/Library/GetAll");
+        let URL = searchParameterName !== "" ? ("http://localhost:5176/api/Library/Search?prName=" + searchParameterName) : ("http://localhost:5176/api/Library/GetAll");
         axios.get(URL).then(response => {
+            response.data.map(item => { item.isEditing = false; })
             setLibraryList(response.data);
         })
     }
@@ -76,8 +78,8 @@ const LibraryComponent = (props) => {
                                 </div>
                                 { /* Phone */}
                                 <div className="col-md-3">
-                                    <label className="form-label">Phone</label>
-                                    <input className="form-control" placeholder="Phone" name="Phone" type="text" />
+                                    <label className="form-label">Telephone</label>
+                                    <input className="form-control" placeholder="Phone" name="telephone" type="text" />
                                 </div>
 
                                 <div className="col-md-2">
@@ -110,9 +112,14 @@ const LibraryComponent = (props) => {
                                 <tbody>
                                     {libraryList.map(item =>
                                         <tr key={item.name} >
-                                            <td>{item.name} </td>
-                                            <td>{item.address} </td>
-                                            <td>{item.telephone}</td>
+                                            <td> <input className="form-control" value={item.name} name="name" disabled={!item.isEditing} /> </td>
+                                            <td> <input className="form-control" value={item.address} name="address" disabled={!item.isEditing} /> </td>
+                                            <td> <input className="form-control" value={item.telephone} name="telephone" disabled={!item.isEditing} /> </td>
+                                            <td>
+                                                <div className="btn-toolbar" >
+                                                    <button type="button" className="btn btn-info mr-2" style={{ display: item.isEditing ? 'none' : 'block' }}>Edit</button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -122,7 +129,7 @@ const LibraryComponent = (props) => {
                 </div>
 
             </div>
-        </div>            
+        </div>
     )
 }
 
