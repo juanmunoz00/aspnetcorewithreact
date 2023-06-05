@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
 import axios from 'axios';
+import { setMaxListeners } from 'events';
 
 const LibraryComponent = (props) => {
 
@@ -34,7 +35,7 @@ const LibraryComponent = (props) => {
     /* UDATE */
     const handleLibraryInputChange = (prLibrary, prInput) => {
         let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
-        const index = librariesNewReference.findIndex((item) => item.name == prLibrary.name);
+        const index = librariesNewReference.findIndex((item) => item.name === prLibrary.name);
         const { name, value } = prInput.target; // Get the NAME and VALUE of the property changed
         librariesNewReference[index] = { ...prLibrary, [name]: value };// Update just the specific propertu keeping the others
         setLibrariesList(librariesNewReference);
@@ -43,7 +44,7 @@ const LibraryComponent = (props) => {
 
     const editLibrary = (prLibrary) => {
         let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
-        const index = librariesNewReference.findIndex((item) => item.name == prLibrary.name);
+        const index = librariesNewReference.findIndex((item) => item.name === prLibrary.name);
         librariesNewReference[index].isEditing = true;
         setLibrariesList(librariesNewReference);
     }
@@ -51,10 +52,29 @@ const LibraryComponent = (props) => {
     const confirmUpdate = (prLibrary) => {
         axios.put("http://localhost:5176/api/Library/Update", prLibrary).then(response => {
             let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
-            const index = librariesNewReference.findIndex((item) => item.name == prLibrary.name);
+            const index = librariesNewReference.findIndex((item) => item.name === prLibrary.name);
             librariesNewReference[index] = prLibrary;
             librariesNewReference[index].isEditing = false;
             setLibrariesList(librariesNewReference);
+        })
+    }
+
+    /* INSERT */
+    const [libraryToAdd, setLibraryToAdd] = (useState)({ name: '', address: '', telephone: '' }); 
+
+    const handleLibraryToAddInputChange = (prInput) => {
+        const { name, value } = prInput.target;
+        let libraryToAddNewReference = { ...libraryToAdd, [name]: value };
+        setLibraryToAdd(libraryToAddNewReference);
+
+    }
+
+    const confirmNewLibrary = () => {
+        axios.post("http://localhost:5176/api/Library/Save", libraryToAdd).then(response => {
+            let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
+            librariesNewReference.push(response.data);
+            setLibrariesList(librariesNewReference);
+            setLibraryToAdd({ name: '', address: '', telephone: '' }); // Clear the state
         })
     }
 
@@ -95,23 +115,23 @@ const LibraryComponent = (props) => {
                                 { /* NAME */}
                                 <div className="col-md-3">
                                     <label className="form-label">Name</label>
-                                    <input className="form-control" placeholder="Name" name="name" type="text" />
+                                    <input className="form-control" placeholder="Name" name="name" value={libraryToAdd.name} onChange={  handleLibraryToAddInputChange.bind(this) } type="text" />
                                 </div>
                                 { /* ADDRESS */}
                                 <div className="col-md-4">
                                     <label className="form-label">Address</label>
-                                    <input className="form-control" placeholder="Address" name="address" type="text" />
+                                    <input className="form-control" placeholder="Address" name="address" value={libraryToAdd.address} onChange={handleLibraryToAddInputChange.bind(this)} type="text" />
                                 </div>
                                 { /* Phone */}
                                 <div className="col-md-3">
                                     <label className="form-label">Telephone</label>
-                                    <input className="form-control" placeholder="Phone" name="telephone" type="text" />
+                                    <input className="form-control" placeholder="Phone" name="telephone" value={libraryToAdd.telephone} onChange={handleLibraryToAddInputChange.bind(this)} type="text" />
                                 </div>
 
                                 <div className="col-md-2">
                                     <label className="form-label">&nbsp;</label>
                                     <div className="btn-toolbar">
-                                        <button type="button" className="btn btn-success form-control">Save</button>
+                                        <button type="button" className="btn btn-success form-control" onClick={ confirmNewLibrary.bind(this) } >Save</button>
                                     </div>
                                 </div>
 
