@@ -42,12 +42,19 @@ const LibraryComponent = (props) => {
 
     }
 
-    const editLibrary = (prLibrary) => {
+    const updateEditingStatus = (prLibrary, prFlag) => {
         let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
         const index = librariesNewReference.findIndex((item) => item.name === prLibrary.name);
-        librariesNewReference[index].isEditing = true;
+        librariesNewReference[index].isEditing = prFlag;
         setLibrariesList(librariesNewReference);
     }
+
+    //const editLibrary = (prLibrary) => {
+    //    let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
+    //    const index = librariesNewReference.findIndex((item) => item.name === prLibrary.name);
+    //    librariesNewReference[index].isEditing = true;
+    //    setLibrariesList(librariesNewReference);
+    //}
 
     const confirmUpdate = (prLibrary) => {
         axios.put("http://localhost:5176/api/Library/Update", prLibrary).then(response => {
@@ -75,6 +82,16 @@ const LibraryComponent = (props) => {
             librariesNewReference.push(response.data);
             setLibrariesList(librariesNewReference);
             setLibraryToAdd({ name: '', address: '', telephone: '' }); // Clear the state
+        })
+    }
+
+    /* DELETE */
+    const deleteLibrary = (prLibrary) => {
+        axios.delete("http://localhost:5176/api/Library/Delete", { data: prLibrary }).then(response => {
+            let librariesNewReference = [...librariesList]; //Create a copy of the object with new reference (new space in memory)
+            const index = librariesNewReference.findIndex((item) => item.name === prLibrary.name);
+            librariesNewReference.splice(index, 1); //Remove item from list
+            setLibrariesList(librariesNewReference);
         })
     }
 
@@ -163,8 +180,10 @@ const LibraryComponent = (props) => {
                                             <td> <input className="form-control" value={item.telephone} onChange={handleLibraryInputChange.bind(this, item)}  name="telephone" disabled={!item.isEditing} /> </td>
                                             <td>
                                                 <div className="btn-toolbar" >
-                                                    <button type="button" className="btn btn-info mr-2" onClick={editLibrary.bind(this, item)} style={{ display: item.isEditing ? 'none' : 'block' }}>Edit</button>
+                                                    <button type="button" className="btn btn-info mr-2" onClick={updateEditingStatus.bind(this, item, true)} style={{ display: item.isEditing ? 'none' : 'block' }}>Edit</button>
+                                                    <button type="button" className="btn btn-warning mr-2" onClick={updateEditingStatus.bind(this, item, false)} style={{ display: item.isEditing ? 'block' : 'none' }}>Cancel</button>
                                                     <button type="button" className="btn btn-info mr-2" onClick={confirmUpdate.bind(this, item)} style={{ display: item.isEditing ? 'block' : 'none' }}>Save</button>
+                                                    <button type="button" className="btn btn-danger mr-2" onClick={ deleteLibrary.bind(this, item) }>Delete</button>
                                                 </div>
                                             </td>
                                         </tr>
