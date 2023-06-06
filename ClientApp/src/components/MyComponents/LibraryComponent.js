@@ -1,6 +1,6 @@
 ﻿import React, { useState } from 'react';
 import axios from 'axios';
-import { setMaxListeners } from 'events';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 const LibraryComponent = (props) => {
 
@@ -63,6 +63,7 @@ const LibraryComponent = (props) => {
             librariesNewReference[index] = prLibrary;
             librariesNewReference[index].isEditing = false;
             setLibrariesList(librariesNewReference);
+            setShowAlertUpdatedLibrary(true);
         })
     }
 
@@ -73,7 +74,7 @@ const LibraryComponent = (props) => {
         const { name, value } = prInput.target;
         let libraryToAddNewReference = { ...libraryToAdd, [name]: value };
         setLibraryToAdd(libraryToAddNewReference);
-
+        
     }
 
     const confirmNewLibrary = () => {
@@ -82,6 +83,7 @@ const LibraryComponent = (props) => {
             librariesNewReference.push(response.data);
             setLibrariesList(librariesNewReference);
             setLibraryToAdd({ name: '', address: '', telephone: '' }); // Clear the state
+            setShowAlertNewLibrary(true);
         })
     }
 
@@ -92,8 +94,14 @@ const LibraryComponent = (props) => {
             const index = librariesNewReference.findIndex((item) => item.name === prLibrary.name);
             librariesNewReference.splice(index, 1); //Remove item from list
             setLibrariesList(librariesNewReference);
+            setShowAlertDeletedLibrary(true);
         })
     }
+
+    /* ALERTS  */
+    const [showAlertNewLibrary, setShowAlertNewLibrary] = useState(false);
+    const [showAlertUpdatedLibrary, setShowAlertUpdatedLibrary] = useState(false);
+    const [showAlertDeletedLibrary, setShowAlertDeletedLibrary] = useState(false);
 
     return (
         <div>
@@ -195,6 +203,40 @@ const LibraryComponent = (props) => {
                 </div>
 
             </div>
+
+            { /* ALERT LIBRARY ADDED */}
+            {showAlertNewLibrary &&
+                <SweetAlert success
+                    confirmBtnText="Ok"
+                    confirmBtnBsStyle="success"
+                    title="Item succesfully added!"
+                    onConfirm={() => setShowAlertNewLibrary(false)}>
+                Please click on "Ok" to close
+                </SweetAlert>
+            }
+
+            { /* ALERT LIBRARY UPDATED */}
+            {showAlertUpdatedLibrary &&
+                <SweetAlert success
+                    confirmBtnText="Ok"
+                    confirmBtnBsStyle="success"
+                    title="Item succesfully updated!"
+                onConfirm={() => setShowAlertUpdatedLibrary(false)}>
+                    Please click on "Ok" to close
+                </SweetAlert>
+            }
+
+            { /* ALERT LIBRARY DELETED */}
+            {showAlertDeletedLibrary &&
+                <SweetAlert success
+                    confirmBtnText="Ok"
+                    confirmBtnBsStyle="success"
+                    title="Item succesfully deleted!"
+                    onConfirm={() => setShowAlertDeletedLibrary(false)}>
+                    Please click on "Ok" to close
+                </SweetAlert>
+            }
+
         </div>
     )
 }
